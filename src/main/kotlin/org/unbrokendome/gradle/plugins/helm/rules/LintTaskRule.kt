@@ -27,7 +27,6 @@ internal class LintTaskRule(
 ) : AbstractHelmChartTaskRule<HelmLint>(
     HelmLint::class.java, tasks, charts, namePattern
 ) {
-
     override fun HelmLint.configureFrom(chart: HelmChart) {
 
         description = "Lints the ${chart.name} chart."

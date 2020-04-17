@@ -8,6 +8,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskDependency
 import org.unbrokendome.gradle.plugins.helm.command.HelmCommandsPlugin
 import org.unbrokendome.gradle.plugins.helm.command.tasks.AbstractHelmInstallationCommandTask
+import org.unbrokendome.gradle.plugins.helm.command.tasks.DownloadHelmClientTask
 import org.unbrokendome.gradle.plugins.helm.command.tasks.HelmUpdateRepositories
 import org.unbrokendome.gradle.plugins.helm.dsl.Filtering
 import org.unbrokendome.gradle.plugins.helm.dsl.HelmChart
@@ -54,16 +55,25 @@ class HelmPlugin
     internal companion object {
         const val addRepositoriesTaskName = "helmAddRepositories"
         const val updateRepositoriesTaskName = "helmUpdateRepositories"
+        const val downloadHelmClientTaskName = "downloadHelmClient"
     }
 
 
     override fun apply(project: Project) {
-
+        if (!project.pluginManager.hasPlugin("base")) {
+            project.pluginManager.apply("base")
+        }
         project.plugins.apply(HelmCommandsPlugin::class.java)
 
         configureRepositories(project)
         project.configureFiltering()
         project.configureCharts()
+
+        val downloadHelmClientTask = project.tasks.register(downloadHelmClientTaskName, DownloadHelmClientTask::class.java) { task ->
+            task.group = HELM_GROUP
+            task.description = "Downloads the helm client that is used to run helm commands"
+        }
+        project.helm.executable.convention(downloadHelmClientTask.map { task -> task.helmExecutable.get().asFile.absolutePath })
     }
 
 

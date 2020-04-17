@@ -11,6 +11,8 @@ import org.unbrokendome.gradle.plugins.helm.util.ifPresent
 
 interface GlobalHelmOptions : HelmOptions {
 
+    val helmVersion: Provider<String>
+
     val executable: Provider<String>
 
     val debug: Provider<Boolean>
@@ -29,6 +31,11 @@ interface GlobalHelmOptions : HelmOptions {
  * Holds options that apply to all Helm commands.
  */
 interface ConfigurableGlobalHelmOptions : GlobalHelmOptions, ConfigurableHelmOptions {
+
+    /**
+     * Helm version string. Determines which version is downloaded
+     */
+    override val helmVersion: Property<String>
 
     /**
      * The name or path of the Helm executable. The `PATH` variable is taken into account, so this
@@ -92,6 +99,9 @@ internal fun ConfigurableGlobalHelmOptions.conventionsFrom(source: GlobalHelmOpt
 internal class DelegateGlobalHelmOptions(
     private val provider: Provider<GlobalHelmOptions>
 ) : GlobalHelmOptions {
+
+    override val helmVersion: Provider<String>
+        get() = provider.flatMap { it.helmVersion }
 
     override val executable: Provider<String>
         get() = provider.flatMap { it.executable }

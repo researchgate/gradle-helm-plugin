@@ -39,6 +39,21 @@ interface HelmPublishingRepositoryContainer : PolymorphicDomainObjectContainer<H
         configuration: Action<ChartMuseumHelmPublishingRepository>
     ): ChartMuseumHelmPublishingRepository =
         chartMuseum("default", configuration)
+
+
+    @JvmDefault
+    fun nexus(
+            name: String,
+            configuration: Action<NexusHelmPublishingRepository>
+    ): NexusHelmPublishingRepository =
+            create(name, NexusHelmPublishingRepository::class.java, configuration)
+
+
+    @JvmDefault
+    fun nexus(
+            configuration: Action<NexusHelmPublishingRepository>
+    ): NexusHelmPublishingRepository =
+            nexus("default", configuration)
 }
 
 
@@ -59,6 +74,10 @@ private open class DefaultHelmPublishingRepositoryContainer
         registerFactory(
             ChartMuseumHelmPublishingRepository::class.java,
             objects::newChartMuseumHelmPublishingRepository
+        )
+        registerFactory(
+                NexusHelmPublishingRepository::class.java,
+                objects::newNexusHelmPublishingRepository
         )
         registerFactory(
             CustomHelmPublishingRepository::class.java,

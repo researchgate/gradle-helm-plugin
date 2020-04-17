@@ -8,6 +8,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Console
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.process.ExecResult
 import org.unbrokendome.gradle.plugins.helm.HELM_GROUP
 import org.unbrokendome.gradle.plugins.helm.command.GlobalHelmOptions
@@ -33,6 +34,9 @@ abstract class AbstractHelmCommandTask
     internal val globalOptions: Property<GlobalHelmOptions> =
         project.objects.property()
 
+    @get:[Input Optional]
+    final override val helmVersion: Provider<String>
+        get() = globalOptions.flatMap { it.helmVersion }
 
     @get:Input
     final override val executable: Provider<String>

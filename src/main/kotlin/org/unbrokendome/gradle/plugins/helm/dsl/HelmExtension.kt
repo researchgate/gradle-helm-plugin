@@ -59,6 +59,9 @@ private open class DefaultHelmExtension
 ) : HelmExtension, HelmExtensionInternal,
     ConfigurableHelmServerOptions by HelmServerOptionsHolder(objects).applyConventions(project) {
 
+    final override val helmVersion: Property<String> =
+        objects.property<String>()
+
     final override val executable: Property<String> =
         objects.property<String>()
             .convention(

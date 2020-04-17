@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.json.JSONArray
-import org.json.JSONObject
 import org.unbrokendome.gradle.plugins.helm.model.Release
 
 
@@ -34,11 +33,12 @@ internal class HelmCommandSupport(
                 option("-o", "json")
                 option("-f", releaseName.map { "^${Regex.escape(it)}$" })
             }
-
-        return JSONArray(result.stdout)
-            .asSequence()
-            .map { Release.fromJson(it as JSONObject) }
-            .firstOrNull()
+        val json = JSONArray(result.stdout)
+        return if (json.length() == 0) {
+            null
+        } else {
+            Release.fromJson(json.getJSONObject(0))
+        }
     }
 }
 
